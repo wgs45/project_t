@@ -1,0 +1,73 @@
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: todo_postgres
+    environment:
+      POSTGRES_USER: postgres_user
+      POSTGRES_PASSWORD: postgres_password
+      POSTGRES_DB: tododb
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    # Added Healthcheck to ensure Postgres is fully awake and initialized
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres_user -d tododb"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - todo-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: todo_redis
+    ports:
+      - "6379:6379"
+    # Added basic health check for Redis sync readiness
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - todo-network
+
+  backend:
+    build: ./backend
+    container_name: todo_fastapi
+    restart: always
+    environment:
+      # Inject both keys so codebase picks it up seamlessly
+      - DATABASE_URL=postgresql+asyncpg://postgres_user:postgres_password@db:5432/tododb
+      - ASYNC_DATABASE_URL=postgresql+asyncpg://postgres_user:postgres_password@db:5432/tododb
+      - REDIS_URL=redis://redis:6379/0
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - todo-network
+
+  frontend:
+    build: ./frontend
+    container_name: todo_nextjs
+    restart: always
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - todo-network
+
+volumes:
+  postgres_data:
+
+networks:
+  todo-network:
+    driver: bridge
