@@ -1,10 +1,11 @@
+# The Twelve-Factor App methodology
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     PROJECT_NAME: str = "Scalable Todo API"
     SECRET_KEY: str = "SUPER_SECRET_KEY_CHANGE_THIS_IN_PRODUCTION_32BYTES_LONG"
     ALGORITHM: str = "HS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60,
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24  # 1 day
 
     POSTGRES_USER: str = "postgres"
     POSTGRES_PASSWORD: str = "postgres"
@@ -20,4 +21,4 @@ class Settings(BaseSettings):
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
-settings = Settings();
+settings = Settings()

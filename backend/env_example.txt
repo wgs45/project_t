@@ -1,0 +1,8 @@
+PROJECT_NAME="Scalable Todo API"
+SECRET_KEY="SECRET_KEY"
+POSTGRES_USER="your_postgre_user"
+POSTGRES_PASSWORD="your_password"
+POSTGRES_SERVER="localhost"
+POSTGRES_PORT=xxxx
+POSTGRES_DB="db_name"
+REDIS_URL="redis://localhost:xxxx/0"

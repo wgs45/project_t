@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.API_SECRET_URL;
+const API_BASE_URL = "http://localhost:8000/api";
 
 // Highly resuable, type-safe function
 export async function apiRequest<T>(
