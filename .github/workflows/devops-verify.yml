@@ -1,0 +1,46 @@
+name: Local Stack Verification Pipeline
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  verify-frontend:
+    name: Build Frontend Image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Compile Frontend Docker Image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./frontend
+          file: ./frontend/Dockerfile
+          push: false # Crucial: This tests the build without pushing anywhere!
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  verify-backend:
+    name: Build Backend Image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Compile Backend Docker Image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./backend
+          file: ./backend/Dockerfile
+          push: false # Crucial: This tests the build without pushing anywhere!
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

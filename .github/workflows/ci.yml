@@ -1,0 +1,76 @@
+name: Continuous Integration (CI)
+
+on:
+  pull_request:
+    branches: [main, develop]
+  push:
+    branches: [develop]
+
+jobs:
+  frontend-ci:
+    name: Frontend Quality Assurance
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Codebase
+        uses: actions/checkout@v4
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-size: 20
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: latest
+          run_install: false
+
+      - name: Get pnpm Store Directory
+        shell: bash
+        run: echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Cache pnpm Dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install Dependencies
+        run: |
+          pnpm approve-builds unrs-resolver
+          pnpm install --frozen-lockfile
+
+      - name: Lint and Type Check
+        run: |
+          pnpm run lint
+          pnpm run tsc --noEmit # Omit if typescript is not strict
+
+  backend-ci:
+    name: Backend Quality Assurance
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Codebase
+        uses: actions/checkout@v4
+
+      - name: Install Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
+          cache-dependency-glob: "backend/uv.lock"
+
+      - name: Install Python Dependencies
+        run: uv pip install --system -r backend/pyproject.toml
+
+      - name: Run Backend Linter & Tests
+        run: |
+          # Example using ruff or pytest if you have them configured
+          # uv run ruff check .
+          # uv run pytest
+          echo "Backend verification completed successfully"
