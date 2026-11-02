@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 // Official React hook used for programmatic navigation inside modern App Router
 import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
 import Link from "next/link";
 import { TokenResponse } from "@/types";
 
@@ -53,56 +54,84 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen p-4">
-      <form
-        onSubmit={handleLogin}
-        className="w-full max-w-md bg-slate-800 p-8 rounded-xl shadow-xl border border-slate-700 space-y-6"
+    <main className="relative flex items-center justify-center min-h-screen bg-trueblack overflow-hidden px-4">
+      <div className="absolute w-125 h-125 bg-indigo-600/15 rounded-full blur-[120px] pointer-events-none"></div>
+      <div className="absolute w-100 h-100 bg-purple-600/10 rounded-full blur-[100px] pointer-events-none -bottom-20 -right-20"></div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 20, scale: 0.98 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+        className="relative w-full max-w-md bg-glass-dark backdrop-blur-xl border border-glass-border p-8 rounded-3xl shadow-[0_30px_100px_rgba(0,0,0,0.9)] space-y-6"
       >
-        <h2 className="text-2xl font-bold text-indigo-400 text-center">
-          Welcome Back!
-        </h2>
-        {error && (
-          <p className="text-red-400 text-sm text-center bg-red-950/50 p-2 rounded">
-            {error}
+        <div className="space-y-2 text-center">
+          <h2 className="text-3xl font-bold tracking-tight text-white">
+            Welcome Back
+          </h2>
+          <p className="text-sm text-slate-400">
+            Enter your credentials to access your workspace
           </p>
+        </div>
+
+        {error && (
+          <motion.div
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="p-3 bg-red-950/40 border border-red-500/30 text-red-400 text-sm rounded-xl text-center"
+          >
+            {error}
+          </motion.div>
         )}
-        <div>
-          <label className="block text-sm font-medium mb-1 text-slate-300">
-            Email
-          </label>
-          <input
-            type="email"
-            required
-            className="w-full p-3 rounded bg-slate-900 border border-slate-700 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-1 text-slate-300">
-            Password
-          </label>
-          <input
-            type="password"
-            required
-            className="w-full p-3 rounded bg-slate-900 border border-slate-700 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </div>
-        <button
-          type="submit"
-          className="w-full py-3 bg-indigo-600 hover:bg-indigo-500 font-semibold rounded-lg transition"
-        >
-          Sign In
-        </button>
+
+        <form onSubmit={handleLogin} className="space-y-4">
+          <div>
+            <label className="block text-sx font-medium uppercas tracking-wider text-slate-400 mb-1.5">
+              Email
+            </label>
+            <input
+              type="email"
+              required
+              placeholder="example@gmail.com"
+              className="w-full px-4 py-3 rounded-xl bg-white/3 border border-white/10 text-white placeholder-slate-650 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all text-sm"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-medium uppercase tracking-wider text-slate-400 mb-1.5">
+              Password
+            </label>
+            <input
+              type="password"
+              required
+              placeholder="••••••••"
+              className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/10 text-white placeholder-slate-650 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all text-sm"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+
+          <motion.button
+            whileHover={{ scale: 1.01 }}
+            whileTap={{ scale: 0.99 }}
+            type="submit"
+            className="w-full py-3.5 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-medium rounded-xl shadow-lg shadow-indigo-600/25 transition-all text-sm"
+          >
+            Sign In
+          </motion.button>
+        </form>
+
         <p>
           Dont have an account?{" "}
-          <Link href="/register" className="text-indigo-400 hover:underline">
+          <Link
+            href="/register"
+            className="text-indigo-400 hover:text-indigo-300 font-medium transition"
+          >
             Register
           </Link>
         </p>
-      </form>
-    </div>
+      </motion.div>
+    </main>
   );
 }
