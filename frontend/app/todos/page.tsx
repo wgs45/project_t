@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { apiRequest } from "@/lib/api";
 import { Todo } from "@/types";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function TodosPage() {
   const [todos, setTodos] = useState<Todo[]>([]);
@@ -92,57 +93,94 @@ export default function TodosPage() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      <header className="flex justify-between items-center mb-8 border-b border-slate-800 pb-4">
-        <h1 className="text-3xl font-bold text-indigo-400">Dashboard</h1>
-        <button
-          onClick={handleLogout}
-          className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded transition"
+    <div className="min-h-screen bg-trueblack text-slate-100 px-4 py-10 selection:bg-indigo-500 selection:text-white">
+      <div className="max-w-3xl mx-auto space-y-8">
+        {/* Header */}
+        <motion.header
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex justify-between items-center bg-glassDark backdrop-blur-xl border border-glassBorder p-6 rounded-3xl shadow-2xl"
         >
-          Logout
-        </button>
-      </header>
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight text-white">
+              Task Dashboard
+            </h1>
+            <p className="text-xs text-slate-400 mt-0.5">
+              Asynchronous PostgreSQL & Redis Backed
+            </p>
+          </div>
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={handleLogout}
+            className="px-4 py-2 bg-white/[0.05] hover:bg-white/[0.08] border border-white/10 text-slate-300 text-xs font-medium rounded-xl transition"
+          >
+            Logout
+          </motion.button>
+        </motion.header>
 
-      <form
-        onSubmit={handleCreate}
-        className="bg-slate-800 p-6 rounded-xl mb-8 space-y-4 border border-slate-700"
-      >
-        <h2 className="text-xl font-semibold">New Task</h2>
-        <input
-          type="text"
-          placeholder="Task Title"
-          required
-          className="w-full p-3 rounded bg-slate-900 border border-slate-700 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
-        <input
-          type="text"
-          placeholder="Description (Optional)"
-          className="w-full p-3 rounded bg-slate-900 border border-slate-700 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-        />
-        <button
-          type="submit"
-          className="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 font-semibold rounded-lg transition"
+        {/* Create Form */}
+        <motion.form
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          onSubmit={handleCreate}
+          className="bg-glassDark backdrop-blur-xl border border-glassBorder p-6 rounded-3xl shadow-2xl space-y-4"
         >
-          Add Task
-        </button>
-
-        {loading ? (
-          <p className="text-center text-slate-400">Loading your tasks...</p>
-        ) : (
+          <h2 className="text-sm font-semibold tracking-wider uppercase text-slate-400">
+            Create New Task
+          </h2>
           <div className="space-y-3">
-            {todos.length === 0 ? (
-              <p className="text-center text-slate-500">
-                No tasks found, Time to create new task
-              </p>
-            ) : (
-              todos.map((todo) => (
-                <div
+            <input
+              type="text"
+              placeholder="What needs to be done?"
+              required
+              className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/10 text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition text-sm"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            />
+            <input
+              type="text"
+              placeholder="Optional description..."
+              className="w-full px-4 py-3 rounded-xl bg-white/[0.03] border border-white/10 text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition text-sm"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            />
+          </div>
+          <motion.button
+            whileHover={{ scale: 1.01 }}
+            whileTap={{ scale: 0.99 }}
+            type="submit"
+            className="w-full py-3 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-medium rounded-xl shadow-lg shadow-indigo-600/20 transition text-sm"
+          >
+            Add Task
+          </motion.button>
+        </motion.form>
+
+        {/* Task List */}
+        <div className="space-y-3">
+          {loading ? (
+            <p className="text-center text-slate-500 py-12 text-sm">
+              Loading tasks...
+            </p>
+          ) : todos.length === 0 ? (
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="text-center text-slate-600 py-12 text-sm"
+            >
+              No tasks found. Your workspace is completely clean. 🌟
+            </motion.p>
+          ) : (
+            <AnimatePresence>
+              {todos.map((todo) => (
+                <motion.div
                   key={todo.id}
-                  className="flex items-center justify-between p-4 bg-slate-800 rounded-lg border border-slate-700/60 hover:border-slate-600 transition"
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.2 }}
+                  className="flex items-center justify-between p-4 bg-glassDark backdrop-blur-xl border border-glassBorder rounded-2xl shadow-xl hover:border-white/15 transition group"
                 >
                   <div className="flex items-center gap-4">
                     <input
@@ -153,31 +191,33 @@ export default function TodosPage() {
                     />
                     <div>
                       <h3
-                        className={`font-semibold ${todo.is_completed ? "line-through text-slate-500" : "text-slate-100"}`}
+                        className={`font-medium text-sm transition ${todo.is_completed ? "line-through text-slate-600" : "text-slate-200"}`}
                       >
                         {todo.title}
                       </h3>
                       {todo.description && (
                         <p
-                          className={`text-sm ${todo.is_completed ? "line-through text-slate-600" : "text-slate-400"}`}
+                          className={`text-xs mt-0.5 transition ${todo.is_completed ? "line-through text-slate-700" : "text-slate-400"}`}
                         >
                           {todo.description}
                         </p>
                       )}
                     </div>
                   </div>
-                  <button
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                     onClick={() => handleDelete(todo.id)}
-                    className="px-3 py-1 bg-red-900/40 hover:bg-red-800/60 text-red-300 rounded text-sm transition"
+                    className="px-3 py-1.5 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 rounded-xl text-xs font-medium transition"
                   >
                     Delete
-                  </button>
-                </div>
-              ))
-            )}
-          </div>
-        )}
-      </form>
+                  </motion.button>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
