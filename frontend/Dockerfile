@@ -8,8 +8,8 @@ ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 
 RUN npm install -g corepack@latest && corepack enable && corepack prepare pnpm@latest --activate
 
-# Copy lockfile and package.json
-COPY package.json pnpm-lock.yaml ./
+# Copy lockfile, package.json, AND pnpm-workspace.yaml
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 
 # Run multi-step approval for native scripts
 RUN pnpm i --frozen-lockfile --ignore-scripts && \
