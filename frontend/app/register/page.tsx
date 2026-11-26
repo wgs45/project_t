@@ -104,7 +104,7 @@ export default function RegisterPage() {
             href="/login"
             className="text-indigo-400 hover:text-indigo-300 font-medium transition"
           >
-            Register
+            Login
           </Link>
         </p>
       </motion.div>

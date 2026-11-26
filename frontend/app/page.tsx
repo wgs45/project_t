@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <main className="flex flex-col items-center justify-center min-h-screen p-6 text-center">
+    <main className="flex flex-col items-center justify-center min-h-screen p-6 text-center bg-trueblack">
       <h1 className="text-5xl font-extrabold tracking-tight text-indigo-400 mb-4">
         Todo list app
       </h1>
